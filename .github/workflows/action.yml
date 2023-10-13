@@ -1,0 +1,68 @@
+name: Env Deployment pipeline
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+
+env:
+  DOCKER_BUILDKIT: 1
+
+on:
+  workflow_dispatch:
+    inputs:
+      deploy_env:
+        description: enviornment name
+        type: environment
+  repository_dispatch:
+
+jobs:
+
+  build:
+    name: Build
+    runs-on: [linux]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3     
+  
+  push-cfn:
+    name: Push cloudfromation
+    runs-on: [linux]
+    steps:
+      - name: Call push cloudformation pipeline
+        id: push-cfn
+        env:
+            ENV_NAME: ${{ inputs.deploy_env }}
+        run: |
+          curl -L \
+          -X POST \
+          -H "Accept: application/vnd.github+json" \
+          -H "Authorization: Bearer ${{ secrets.ACTION_SECRET }}" \
+          -H "X-GitHub-Api-Version: 2022-11-28" \
+          https://api.github.com/repos/aqeel-eurus/poc-reusable-reply-action/actions/workflows/action.yml/dispatches \
+          -d '{"ref":"main","inputs":{"deploy_env":"$ENV_NAME"}}'
+        shell: bash
+  deploy:
+    name: Deploy
+    runs-on: [linux]
+    environment: ${{ inputs.deploy_env }}
+
+    steps:
+      - name: Call push cloudformation pipeline
+        id: push-cfn
+        env:
+            ENV_NAME: ${{ inputs.deploy_env }}
+        run: |
+          echo "Deploy step running"
+        shell: bash
+
+  response-from-push-cfn:
+    name: Pushed cloudfromation
+    runs-on: [linux]
+    needs: push-cfn
+    steps:
+      - name: Response from push cloudformation pipeline
+        id: pushed-cfn
+        env:
+            ENV_NAME: ${{ inputs.deploy_env }}
+        run: |
+          echo "Response received from '${{ github.event.client_payload.repository }}'"
+        shell: bash
