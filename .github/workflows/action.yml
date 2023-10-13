@@ -79,7 +79,7 @@ jobs:
       - name: Response from push cloudformation pipeline
         id: pushed-cfn
         run: |
-          sleep 100
+          sleep 60
           response=$(curl -s \
           -H "Authorization: Bearer $GITHUB_TOKEN" \
           "https://api.github.com/repos/aqeeleurus/poc-reusable-reply-action/actions/workflows/action.yml/runs")
