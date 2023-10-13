@@ -82,7 +82,7 @@ jobs:
           response=$(curl -s \
           -H "Authorization: Bearer $GITHUB_TOKEN" \
           "https://api.github.com/repos/aqeeleurus/poc-reusable-reply-action/actions/workflows/action.yml/runs")
-
+          sleep 60
           status=$(echo $response | jq -r '.workflow_runs[0].conclusion')
           echo $status
           if [ "$status" == "success" ]; then
