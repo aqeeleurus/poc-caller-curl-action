@@ -12,7 +12,7 @@ on:
       deploy_env:
         description: enviornment name
         type: string #environment 
-  repository_dispatch:
+  # repository_dispatch:
 
 jobs:
 
@@ -83,6 +83,7 @@ jobs:
           -H "Authorization: Bearer $GITHUB_TOKEN" \
           "https://api.github.com/repos/aqeeleurus/poc-reusable-reply-action/actions/workflows/action.yml/runs")
           sleep 60
+          echo $response
           status=$(echo $response | jq -r '.workflow_runs[0].conclusion')
           echo $status
           if [ "$status" == "success" ]; then
