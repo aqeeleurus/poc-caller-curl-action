@@ -18,14 +18,15 @@ jobs:
 
   build:
     name: Build
-    runs-on: [linux]
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3     
   
   push-cfn:
     name: Push cloudfromation
-    runs-on: [linux]
+    runs-on: ubuntu-latest
+    needs: [build,deploy]
     steps:
       - name: Call push cloudformation pipeline
         id: push-cfn
@@ -42,7 +43,7 @@ jobs:
         shell: bash
   deploy:
     name: Deploy
-    runs-on: [linux]
+    runs-on: ubuntu-latest
     environment: ${{ inputs.deploy_env }}
 
     steps:
@@ -56,7 +57,7 @@ jobs:
 
   response-from-push-cfn:
     name: Pushed cloudfromation
-    runs-on: [linux]
+    runs-on: ubuntu-latest
     needs: push-cfn
     steps:
       - name: Response from push cloudformation pipeline
