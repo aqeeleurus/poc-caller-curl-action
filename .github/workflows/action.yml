@@ -47,8 +47,8 @@ jobs:
     environment: ${{ inputs.deploy_env }}
 
     steps:
-      - name: Call push cloudformation pipeline
-        id: push-cfn
+      - name: deploy
+        id: deploy
         env:
             ENV_NAME: ${{ inputs.deploy_env }}
         run: |
